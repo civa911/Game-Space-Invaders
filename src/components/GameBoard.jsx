@@ -1,4 +1,3 @@
-// src/components/GameBoard.jsx
 import React, { useState, useEffect } from 'react';
 import Player from './Player';
 import Enemy from './Enemy';
@@ -6,12 +5,17 @@ import Bullet from './Bullet';
 import UI from './UI';
 import useKeyboardControls from '../hooks/useKeyboardControls';
 
+// Звуки
+import shootSound from '../assets/sounds/shoot.wav';
+import explosionSound from '../assets/sounds/explosion.wav';
+
 const GameBoard = () => {
   const [playerPosition, setPlayerPosition] = useState(250);
   const [bullets, setBullets] = useState([]);
   const [enemies, setEnemies] = useState([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [enemySpeed, setEnemySpeed] = useState(50);
 
   // Инициализация врагов
   const generateEnemies = () => {
@@ -25,6 +29,8 @@ const GameBoard = () => {
     }
     setEnemies(enemyRows.flat());
   };
+
+  
 
   // Обработчик движения игрока
   const movePlayer = (direction) => {
@@ -41,6 +47,7 @@ const GameBoard = () => {
 
   // Обработчик стрельбы
   const shootBullet = () => {
+    new Audio(shootSound).play(); // Воспроизводим звук выстрела
     setBullets((prevBullets) => [
       ...prevBullets,
       { positionX: playerPosition + 20, positionY: 450, id: Date.now() }
@@ -84,6 +91,7 @@ const GameBoard = () => {
         });
 
         if (hitEnemy) {
+          new Audio(explosionSound).play(); // Звук взрыва
           setEnemies((prevEnemies) => {
             return prevEnemies.filter((enemy) => enemy.id !== hitEnemy.id);
           });
@@ -95,6 +103,13 @@ const GameBoard = () => {
       });
     });
   };
+
+  // Управляем скоростью врагов с увеличением сложности
+  useEffect(() => {
+    if (score >= 100) {
+      setEnemySpeed(40); // Увеличиваем скорость после 100 очков
+    }
+  }, [score]);
 
   // Счётчик для движения пуль и врагов
   useEffect(() => {
@@ -133,6 +148,7 @@ const GameBoard = () => {
     );
   }
 
+// Отображение UI
   return (
     <div className="game-board">
       <Player positionX={playerPosition} />
