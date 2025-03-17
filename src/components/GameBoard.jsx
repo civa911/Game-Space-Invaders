@@ -6,8 +6,8 @@ import UI from './UI';
 import useKeyboardControls from '../hooks/useKeyboardControls';
 
 // Звуки
-import shootSound from '../assets/sounds/shoot.wav';
-import explosionSound from '../assets/sounds/explosion.wav';
+import shootSound from '../assets/sounds/shoot.mp3';
+import explosionSound from '../assets/sounds/explosion.mp3';
 
 const GameBoard = () => {
   const [playerPosition, setPlayerPosition] = useState(250);
