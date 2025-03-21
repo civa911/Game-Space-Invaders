@@ -1,0 +1,45 @@
+.main-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-size: cover;
+  color: white;
+  font-family: 'Press Start 2P', cursive; 
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  margin-bottom: 20px;
+}
+
+.menu-button {
+  font-size: 1.5rem;
+  margin: 10px 0;
+  padding: 15px 25px;
+  background-color: #333;
+  color: white;
+  border: 2px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.menu-button:hover {
+  background-color: #555;
+  transform: scale(1.1);
+}
+
+.menu-button:focus {
+  outline: none;
+}
+
+.main-menu::after {
+  content: url('');
+  position: absolute;
+  bottom: 10px;
+}

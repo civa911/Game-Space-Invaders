@@ -13,6 +13,13 @@
   }
 }
 
+@font-face {
+  font-family: 'Pixeboy';
+  src: url("./assets/fonts/Pixeboy-z8XGD.ttf");
+  font-weight: normal;
+  font-style: normal; 
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -36,22 +43,38 @@
     transform: rotate(360deg);
   }
 }
+body {
+  margin: 0; 
+  height: 100vh; 
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  background-image: url('./assets/backgrounds/space.png');
+  background-size: cover; 
+  background-repeat: no-repeat; 
+}
 
 .game-board {
   position: relative;
-  width: 600px;
-  height: 500px;
-  background-color: black;
+  width: 40vw;
+  height: 100vh;
+  background-image: url(assets/backgrounds/space_2.avif);
+  background-position: center;
+  background-repeat: no-repeat; 
   margin: 0 auto;
   overflow: hidden;
+  
 }
 
 .player {
-  background-color: green;
+  background-image: url('./assets/models/Ship_5.png');
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-position: center;
   width: 50px;
   height: 50px;
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
 }
 
 .enemy {
@@ -69,40 +92,26 @@
 
 .ui {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0px;
+  left: 70px;
   color: white;
-  font-size: 20px;
+  font-size: 25px;
+  font-family: 'Pixeboy';
 }
 
-.main-menu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* height: 100vh; */
-  background-color: #000;
-  color: white;
-}
-
-.main-menu h1 {
-  font-size: 3em;
-  margin-bottom: 30px;
-}
-
-.main-menu button {
-  font-size: 1.5em;
-  padding: 10px 20px;
-  margin: 10px;
-  cursor: pointer;
-}
-
-.game-over {
-  text-align: center;
-  color: white;
+.lives {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2em;
+  top: 0px;
+  right: 70px;
+  color: white;
+  font-size: 25px;
+  font-family: 'Pixeboy';
+}
+
+.heart {
+  width: 30px; 
+  height: 30px;
+  background-image: url('./assets/models/heart.png'); 
+  background-size: cover; 
+  background-repeat: no-repeat; 
 }

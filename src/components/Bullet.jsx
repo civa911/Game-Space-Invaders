@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from 'react';
 
-const Bullet = ({ positionX, positionY }) => {
+const Bullet = ({ id, positionX, positionY, onPositionUpdate }) => {
   const [position, setPosition] = useState({ x: positionX, y: positionY });
 
   useEffect(() => {
     const interval = setInterval(() => {
       setPosition((prev) => {
-        if (prev.y > 0) {
-          return { x: prev.x, y: prev.y - 10 };
+        const newY = prev.y - 10; // Пуля движется вверх
+        if (newY > 0) {
+          // Передаём обновлённые координаты в родительский компонент
+          onPositionUpdate(id, prev.x, newY);
+          return { x: prev.x, y: newY };
+        } else {
+          // Пуля вышла за пределы экрана
+          clearInterval(interval);
+          onPositionUpdate(id, null, null); // Уведомляем родительский компонент об удалении пули
+          return prev;
         }
-        clearInterval(interval);
-        return prev;
       });
-    }, 50);
+    }, 30);
+
+    // Очистка интервала при размонтировании компонента
     return () => clearInterval(interval);
-  }, [position.y]);
+  }, [id, onPositionUpdate]);
 
   return (
     <div
