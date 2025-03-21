@@ -1,42 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Player from './Player';
-import EnemyRow from './EnemyRow'; // Импортируем EnemyRow
+import EnemyRow from './EnemyRow';
 import Bullet from './Bullet';
 import UI from './UI';
-import useKeyboardControls from '../hooks/useKeyboardControls';
 import LivesCount from './LivesCount';
 
 // Звуки
-import shootSound from '../assets/sounds/shoot.mp3';
 import explosionSound from '../assets/sounds/explosion.mp3';
 
 const GameBoard = () => {
   const [playerPosition, setPlayerPosition] = useState(360);
   const [bullets, setBullets] = useState([]);
-  const [enemies, setEnemies] = useState([]); // Состояние врагов
+  const [enemies, setEnemies] = useState([]);
   const [score, setScore] = useState(0);
   const [livesArray, setLivesCount] = useState([]);
 
-  // Обработчик движения игрока
-  const movePlayer = (direction) => {
-    setPlayerPosition((prevPosition) => {
-      if (direction === 'left' && prevPosition > 0) {
-        return prevPosition - 10;
-      }
-      if (direction === 'right' && prevPosition < 720) {
-        return prevPosition + 10;
-      }
-      return prevPosition;
-    });
-  };
-
-  // Обработчик стрельбы игроком
-  const shootBullet = () => {
-    new Audio(shootSound).play();
-    setBullets((prevBullets) => [
-      ...prevBullets,
-      { id: Date.now(), positionX: playerPosition + 22, positionY: window.innerHeight - 100 },
-    ]);
+  // Обработчик создания пули
+  const handleShoot = (bullet) => {
+    setBullets((prevBullets) => [...prevBullets, bullet]);
   };
 
   // Обновление позиции пули
@@ -98,9 +79,6 @@ const GameBoard = () => {
     return () => clearInterval(interval);
   }, [bullets, enemies]);
 
-  // Управление игроком
-  useKeyboardControls(movePlayer, shootBullet);
-
   // Рендер всех пуль
   const renderBullets = () => {
     return bullets.map((bullet) => (
@@ -117,8 +95,8 @@ const GameBoard = () => {
   // Отображение UI
   return (
     <div className="game-board">
-      <Player positionX={playerPosition} />
-      <EnemyRow enemies={enemies} setEnemies={setEnemies} /> {/* Передаем состояние врагов */}
+      <Player onPositionChange={setPlayerPosition} onShoot={handleShoot} />
+      <EnemyRow enemies={enemies} setEnemies={setEnemies} />
       {renderBullets()}
       <UI score={score} />
       <LivesCount lives={livesArray} />
