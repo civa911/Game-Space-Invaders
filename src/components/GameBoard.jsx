@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Player from './Player';
-import Enemy from './Enemy';
+import EnemyRow from './EnemyRow'; // Импортируем EnemyRow
 import Bullet from './Bullet';
 import UI from './UI';
 import useKeyboardControls from '../hooks/useKeyboardControls';
@@ -13,36 +13,9 @@ import explosionSound from '../assets/sounds/explosion.mp3';
 const GameBoard = () => {
   const [playerPosition, setPlayerPosition] = useState(360);
   const [bullets, setBullets] = useState([]);
-  const [enemies, setEnemies] = useState([]);
+  const [enemies, setEnemies] = useState([]); // Состояние врагов
   const [score, setScore] = useState(0);
   const [livesArray, setLivesCount] = useState([]);
-  const [gameOver, setGameOver] = useState(false);
-  const [enemySpeed, setEnemySpeed] = useState(50);
-
-  
-
-
-  // Инициализация врагов
-  const generateEnemies = () => {
-    const enemyRows = [];
-    for (let i = 0; i < 5; i++) {  // 5 рядов
-      let row = [];
-      for (let j = 0; j < 10; j++) {  // 10 врагов в ряду
-        row.push({ id: i * 10 + j, positionX: 50 + j * 50, positionY: 50 + i * 50, direction: 1 });
-      }
-      enemyRows.push(row);
-    }
-    setEnemies(enemyRows.flat());
-  };
-
-  const generateLives = () => {
-    let livesArray = [];
-    for (let i = 0; i < 3; i++) {
-      livesArray.push(i);
-    }
-    setLivesCount (livesArray);
-  }
-  
 
   // Обработчик движения игрока
   const movePlayer = (direction) => {
@@ -57,118 +30,95 @@ const GameBoard = () => {
     });
   };
 
-  // Обработчик стрельбы
+  // Обработчик стрельбы игроком
   const shootBullet = () => {
-    new Audio(shootSound).play(); // Воспроизводим звук выстрела
+    new Audio(shootSound).play();
     setBullets((prevBullets) => [
       ...prevBullets,
-      { positionX: playerPosition + 22, positionY: window.innerHeight - 100, id: Date.now() }
+      { id: Date.now(), positionX: playerPosition + 22, positionY: window.innerHeight - 100 },
     ]);
   };
 
-  // Двигаем врагов
-  const moveEnemies = () => {
-    setEnemies((prevEnemies) => {
-      let allEnemiesMoved = true;
-      return prevEnemies.map((enemy) => {
-        if (enemy.positionY >= 400) {
-          setGameOver(true);  // Игра окончена, если враг достиг дна
-          return enemy;
-        }
-        if (enemy.direction === 1 && enemy.positionX >= 550) {
-          enemy.direction = -1;
-          return { ...enemy, positionY: enemy.positionY + 20 }; // Вниз
-        }
-        if (enemy.direction === -1 && enemy.positionX <= 0) {
-          enemy.direction = 1;
-          return { ...enemy, positionY: enemy.positionY + 20 }; // Вниз
-        }
+  // Обновление позиции пули
+  const updateBulletPosition = (id, x, y) => {
+    setBullets((prev) =>
+      prev.map((bullet) =>
+        bullet.id === id ? { ...bullet, positionX: x, positionY: y } : bullet
+      )
+    );
 
-        return { ...enemy, positionX: enemy.positionX + (enemy.direction * 5) };
-      });
-    });
-  };
-
-  // Проверка столкновений пуль с врагами
-  const checkCollisions = () => {
-    setBullets((prevBullets) => {
-      return prevBullets.filter((bullet) => {
-        const hitEnemy = enemies.find((enemy) => {
-          return (
-            bullet.positionX >= enemy.positionX &&
-            bullet.positionX <= enemy.positionX + 40 &&
-            bullet.positionY >= enemy.positionY &&
-            bullet.positionY <= enemy.positionY + 40
-          );
-        });
-
-        if (hitEnemy) {
-          new Audio(explosionSound).play(); // Звук взрыва
-          setEnemies((prevEnemies) => {
-            return prevEnemies.filter((enemy) => enemy.id !== hitEnemy.id);
-          });
-          setScore((prevScore) => prevScore + 10);  // Увеличиваем очки
-          return false; // Удаляем пулю
-        }
-
-        return bullet.positionY > 0;  // Пуля остаётся, если она не покинула экран
-      });
-    });
-  };
-
-  // Управляем скоростью врагов с увеличением сложности
-  useEffect(() => {
-    if (score >= 100) {
-      setEnemySpeed(40); // Увеличиваем скорость после 100 очков
+    // Если пуля вышла за пределы экрана, удаляем её
+    if (x === null && y === null) {
+      setBullets((prev) => prev.filter((bullet) => bullet.id !== id));
     }
-  }, [score]);
+  };
 
+  // Проверка столкновений
+  const checkCollisions = () => {
+    bullets.forEach((bullet) => {
+      enemies.forEach((enemy) => {
+        if (
+          bullet.positionX >= enemy.positionX &&
+          bullet.positionX <= enemy.positionX + 50 && // Ширина врага
+          bullet.positionY >= enemy.positionY &&
+          bullet.positionY <= enemy.positionY + 50 // Высота врага
+        ) {
+          // Удаляем врага и пулю
+          setEnemies((prev) => prev.filter((e) => e.id !== enemy.id));
+          setBullets((prev) => prev.filter((b) => b.id !== bullet.id));
+          // Начисляем очки
+          setScore((prev) => prev + 100);
+          // Звук взрыва
+          new Audio(explosionSound).play();
+        }
+      });
+    });
+  };
+
+  // Создание массива с жизнями
+  const generateLives = () => {
+    let livesArray = [];
+    for (let heart = 0; heart < 3; heart++) {
+      livesArray.push(heart);
+    }
+    setLivesCount(livesArray);
+  };
+
+  // Инициализация при монтировании
   useEffect(() => {
     generateLives();
   }, []);
 
-  // Счётчик для движения пуль и врагов
+  // Проверка столкновений на каждом шаге
   useEffect(() => {
-    generateEnemies();
     const interval = setInterval(() => {
-      moveEnemies();
       checkCollisions();
     }, 50);
 
     return () => clearInterval(interval);
-  }, [enemies]);
+  }, [bullets, enemies]);
 
   // Управление игроком
   useKeyboardControls(movePlayer, shootBullet);
 
-  // Рендер всех врагов
-  const renderEnemies = () => {
-    return enemies.map((enemy) => (
-      <Enemy key={enemy.id} positionX={enemy.positionX} positionY={enemy.positionY} />
-    ));
-  };
-
   // Рендер всех пуль
   const renderBullets = () => {
     return bullets.map((bullet) => (
-      <Bullet key={bullet.id} positionX={bullet.positionX} positionY={bullet.positionY} />
+      <Bullet
+        key={bullet.id}
+        id={bullet.id}
+        positionX={bullet.positionX}
+        positionY={bullet.positionY}
+        onPositionUpdate={updateBulletPosition}
+      />
     ));
   };
 
-  if (gameOver) {
-    return (
-      <div className="game-over">
-        <h2>Game Over! Your score: {score}</h2>
-        <button onClick={() => window.location.reload()}>Restart</button>
-      </div>
-    );
-  }
-
-// Отображение UI
+  // Отображение UI
   return (
     <div className="game-board">
       <Player positionX={playerPosition} />
-      {renderEnemies()}
+      <EnemyRow enemies={enemies} setEnemies={setEnemies} /> {/* Передаем состояние врагов */}
       {renderBullets()}
       <UI score={score} />
       <LivesCount lives={livesArray} />
