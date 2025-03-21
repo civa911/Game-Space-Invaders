@@ -62,7 +62,7 @@ const GameBoard = () => {
     new Audio(shootSound).play(); // Воспроизводим звук выстрела
     setBullets((prevBullets) => [
       ...prevBullets,
-      { positionX: playerPosition + 20, positionY: 450, id: Date.now() }
+      { positionX: playerPosition + 22, positionY: window.innerHeight - 100, id: Date.now() }
     ]);
   };
 

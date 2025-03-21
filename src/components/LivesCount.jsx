@@ -8,11 +8,7 @@ const LivesCount = ({ lives }) => {
         {lives.map((_, index) => (
           <div
             key={index}
-            style={{
-              width: '20px',
-              height: '20px',
-              backgroundColor: 'red',
-            }}
+            className="heart"
           ></div>
         ))}
       </div>

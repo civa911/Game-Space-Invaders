@@ -10,7 +10,7 @@ const Player = ({ positionX }) => {
         bottom: '10',
         width: '50px',
         height: '50px',
-        backgroundColor: 'green',
+        backgroundColor: 0,
       }}
     ></div>
   );

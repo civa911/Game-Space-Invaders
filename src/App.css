@@ -42,6 +42,9 @@ body {
   display: flex;
   justify-content: center; 
   align-items: center; 
+  background-image: url('./assets/backgrounds/space.png');
+  background-size: cover; 
+  background-repeat: no-repeat; 
 }
 
 .game-board {
@@ -55,7 +58,10 @@ body {
 }
 
 .player {
-  background-color: green;
+  background-image: url('./assets/models/Ship_5.png');
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-position: center;
   width: 50px;
   height: 50px;
   position: absolute;
@@ -89,4 +95,12 @@ body {
   right: 30px;
   color: white;
   font-size: 20px;
+}
+
+.heart {
+  width: 30px; 
+  height: 30px;
+  background-image: url('./assets/models/heart.png'); 
+  background-size: cover; 
+  background-repeat: no-repeat; 
 }
