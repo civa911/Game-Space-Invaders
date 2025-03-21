@@ -6,18 +6,21 @@ const Bullet = ({ id, positionX, positionY, onPositionUpdate }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setPosition((prev) => {
-        const newY = prev.y - 10;
+        const newY = prev.y - 10; // Пуля движется вверх
         if (newY > 0) {
+          // Передаём обновлённые координаты в родительский компонент
           onPositionUpdate(id, prev.x, newY);
           return { x: prev.x, y: newY };
         } else {
+          // Пуля вышла за пределы экрана
           clearInterval(interval);
-          onPositionUpdate(id, null, null); 
+          onPositionUpdate(id, null, null); // Уведомляем родительский компонент об удалении пули
           return prev;
         }
       });
-    }, 50);
+    }, 30);
 
+    // Очистка интервала при размонтировании компонента
     return () => clearInterval(interval);
   }, [id, onPositionUpdate]);
 

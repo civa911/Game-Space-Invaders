@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useKeyboardControls from '../hooks/useKeyboardControls';
 import shootSound from '../assets/sounds/shoot.mp3';
 
-const Player = ({ onShoot }) => {
+const Player = ({ onShoot, onPositionChange }) => {
   const [positionX, setPositionX] = useState(360);
 
   // Обработчик движения игрока
@@ -32,6 +32,12 @@ const Player = ({ onShoot }) => {
 
   // Управление игроком
   useKeyboardControls(movePlayer, handleShoot);
+
+  // Передаем текущие координаты игрока в родительский компонент
+  useEffect(() => {
+    const playerY = window.innerHeight - 100; // Фиксированная координата Y игрока
+    onPositionChange({ x: positionX, y: playerY });
+  }, [positionX, onPositionChange]);
 
   return (
     <div

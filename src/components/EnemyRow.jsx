@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Enemy from './Enemy';
 
 const EnemyRow = ({ enemies, setEnemies, onEnemyShoot }) => {
-  // Логика создания волн врагов
+ 
   const generateEnemies = () => {
     const enemyRows = [];
     const gameWidth = 0.4 * window.innerWidth;
@@ -29,21 +29,21 @@ const EnemyRow = ({ enemies, setEnemies, onEnemyShoot }) => {
     setEnemies(enemyRows.flat());
   };
 
-  // Инициализация врагов при монтировании
+  
   useEffect(() => {
     generateEnemies();
   }, []);
 
-  // Рендер всех врагов
+  
   return (
     <>
       {enemies.map((enemy) => (
         <Enemy
           key={enemy.id}
-          id={enemy.id} // Передаем id врага
+          id={enemy.id} 
           positionX={enemy.positionX}
           positionY={enemy.positionY}
-          onEnemyShoot={onEnemyShoot} // Передаем функцию onEnemyShoot
+          onEnemyShoot={onEnemyShoot} 
         />
       ))}
     </>
