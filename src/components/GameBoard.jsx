@@ -7,10 +7,11 @@ import LivesCount from './LivesCount';
 
 // Звуки
 import explosionSound from '../assets/sounds/explosion.mp3';
+import EnemyBullet from './EnemyBullet';
 
 const GameBoard = () => {
-  const [playerPosition, setPlayerPosition] = useState(360);
   const [bullets, setBullets] = useState([]);
+  const [enemyBullets, setEnemyBullets] = useState([]);
   const [enemies, setEnemies] = useState([]);
   const [score, setScore] = useState(0);
   const [livesArray, setLivesCount] = useState([]);
@@ -18,6 +19,10 @@ const GameBoard = () => {
   // Обработчик создания пули
   const handleShoot = (bullet) => {
     setBullets((prevBullets) => [...prevBullets, bullet]);
+  };
+  // Обработчик создания пули врага
+  const handleEnemyShoot = (bullet) => {
+    setEnemyBullets((prevBullets) => [...prevBullets, bullet]);
   };
 
   // Обновление позиции пули
@@ -31,6 +36,20 @@ const GameBoard = () => {
     // Если пуля вышла за пределы экрана, удаляем её
     if (x === null && y === null) {
       setBullets((prev) => prev.filter((bullet) => bullet.id !== id));
+    }
+  };
+
+  // Обновление позиции пули врага
+  const updateEnemyBulletPosition = (id, x, y) => {
+    setEnemyBullets((prev) =>
+      prev.map((bullet) =>
+        bullet.id === id ? { ...bullet, positionX: x, positionY: y } : bullet
+      )
+    );
+
+    // Если пуля вышла за пределы экрана, удаляем её
+    if (x === null && y === null) {
+      setEnemyBullets((prev) => prev.filter((bullet) => bullet.id !== id));
     }
   };
 
@@ -56,6 +75,28 @@ const GameBoard = () => {
     });
   };
 
+  // Проверка столкновений пуль врагов с игроком
+  const checkEnemyBulletCollisions = () => {
+    enemyBullets.forEach((bullet) => {
+      // Предположим, что игрок находится в позиции (playerX, playerY)
+      const playerX = 200; // Замените на реальные координаты игрока
+      const playerY = 500; // Замените на реальные координаты игрока
+
+      if (
+        bullet.positionX >= playerX &&
+        bullet.positionX <= playerX + 50 && // Ширина игрока
+        bullet.positionY >= playerY &&
+        bullet.positionY <= playerY + 50 // Высота игрока
+      ) {
+        // Удаляем пулю
+        setEnemyBullets((prev) => prev.filter((b) => b.id !== bullet.id));
+        // Уменьшаем количество жизней
+        setLivesCount((prev) => prev.slice(0, -1));
+      }
+    });
+  };
+
+
   // Создание массива с жизнями
   const generateLives = () => {
     let livesArray = [];
@@ -74,10 +115,11 @@ const GameBoard = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       checkCollisions();
+      checkEnemyBulletCollisions();
     }, 50);
 
     return () => clearInterval(interval);
-  }, [bullets, enemies]);
+  }, [bullets, enemies, enemyBullets]);
 
   // Рендер всех пуль
   const renderBullets = () => {
@@ -92,12 +134,26 @@ const GameBoard = () => {
     ));
   };
 
+  // Рендер всех пуль врагов
+  const renderEnemyBullets = () => {
+    return enemyBullets.map((bullet) => (
+      <EnemyBullet
+        key={bullet.id}
+        id={bullet.id}
+        positionX={bullet.positionX}
+        positionY={bullet.positionY}
+        onPositionUpdate={updateEnemyBulletPosition}
+      />
+    ));
+  };
+
   // Отображение UI
   return (
     <div className="game-board">
-      <Player onPositionChange={setPlayerPosition} onShoot={handleShoot} />
-      <EnemyRow enemies={enemies} setEnemies={setEnemies} />
+      <Player onShoot={handleShoot} />
+      <EnemyRow enemies={enemies} setEnemies={setEnemies} onEnemyShoot={handleEnemyShoot}/>
       {renderBullets()}
+      {renderEnemyBullets()}
       <UI score={score} />
       <LivesCount lives={livesArray} />
     </div>

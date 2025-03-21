@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Enemy from './Enemy';
 
-const EnemyRow = ({ enemies, setEnemies }) => {
+const EnemyRow = ({ enemies, setEnemies, onEnemyShoot }) => {
   // Логика создания волн врагов
   const generateEnemies = () => {
     const enemyRows = [];
@@ -30,7 +30,7 @@ const EnemyRow = ({ enemies, setEnemies }) => {
   };
 
   // Инициализация врагов при монтировании
-  React.useEffect(() => {
+  useEffect(() => {
     generateEnemies();
   }, []);
 
@@ -40,8 +40,10 @@ const EnemyRow = ({ enemies, setEnemies }) => {
       {enemies.map((enemy) => (
         <Enemy
           key={enemy.id}
+          id={enemy.id} // Передаем id врага
           positionX={enemy.positionX}
           positionY={enemy.positionY}
+          onEnemyShoot={onEnemyShoot} // Передаем функцию onEnemyShoot
         />
       ))}
     </>

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useKeyboardControls from '../hooks/useKeyboardControls';
 import shootSound from '../assets/sounds/shoot.mp3';
 
-const Player = ({ onPositionChange, onShoot }) => {
+const Player = ({ onShoot }) => {
   const [positionX, setPositionX] = useState(360);
 
   // Обработчик движения игрока
@@ -15,13 +15,12 @@ const Player = ({ onPositionChange, onShoot }) => {
       if (direction === 'right' && prevPosition < 720) {
         newPosition = prevPosition + 10;
       }
-      onPositionChange(newPosition); // Сообщаем GameBoard о новой позиции
       return newPosition;
     });
   };
 
   // Обработчик стрельбы игроком
-  const shootBullet = () => {
+  const handleShoot = () => {
     new Audio(shootSound).play();
     const bullet = {
       id: Date.now(),
@@ -32,7 +31,7 @@ const Player = ({ onPositionChange, onShoot }) => {
   };
 
   // Управление игроком
-  useKeyboardControls(movePlayer, shootBullet);
+  useKeyboardControls(movePlayer, handleShoot);
 
   return (
     <div
@@ -43,7 +42,6 @@ const Player = ({ onPositionChange, onShoot }) => {
         bottom: '10px',
         width: '50px',
         height: '50px',
-        backgroundColor: 'null', 
       }}
     ></div>
   );
