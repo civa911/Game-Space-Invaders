@@ -29,6 +29,19 @@ const EnemyRow = ({ enemies, setEnemies, onEnemyShoot }) => {
     setEnemies(enemyRows.flat());
   };
 
+  useEffect(() => {
+    const shootInterval = setInterval(() => {
+      enemies.forEach(enemy => {
+        onEnemyShoot({
+          id: `${enemy.id}-bullet-${Date.now()}`,
+          positionX: enemy.positionX + 25, // Центр врага
+          positionY: enemy.positionY + 50, // Нижняя часть врага
+        });
+      });
+    }, 1000); // Интервал стрельбы
+
+    return () => clearInterval(shootInterval);
+  }, [enemies, onEnemyShoot]);
   
   useEffect(() => {
     generateEnemies();

@@ -1,24 +1,7 @@
 import React, { useEffect } from 'react';
 
-const Enemy = ({ positionX, positionY, onEnemyShoot, id }) => {
-  useEffect(() => {
-    const shootInterval = setInterval(() => {
- 
-      const bulletX = positionX + 20; 
-      const bulletY = positionY + 40; 
-
-      // Создаем пулю
-      const bullet = {
-        id: `${id}-${Date.now()}`, 
-        positionX: bulletX,
-        positionY: bulletY,
-      };
-
-      onEnemyShoot(bullet);
-    }, 10000); 
-
-    return () => clearInterval(shootInterval); 
-  }, [positionX, positionY, onEnemyShoot, id]);
+const Enemy = ({ positionX, positionY}) => {
+  
 
   return (
     <div

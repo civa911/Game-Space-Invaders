@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Player from './Player';
 import EnemyRow from './EnemyRow';
 import Bullet from './Bullet';
+import EnemyBullet from './EnemyBullet';
 import UI from './UI';
 import LivesCount from './LivesCount';
 import GameOverMenu from './GameOverMenu';
 
 // Звуки
 import explosionSound from '../assets/sounds/explosion.mp3';
-import EnemyBullet from './EnemyBullet';
 
 const GameBoard = () => {
   const [bullets, setBullets] = useState([]);
@@ -42,7 +42,7 @@ const GameBoard = () => {
   }, []);
 
   // Обновление позиции пули врага
-  const updateEnemyBulletPosition = (id, x, y) => {
+  const updateEnemyBulletPosition = useCallback((id, x, y) => {
     setEnemyBullets((prev) =>
       prev.map((bullet) =>
         bullet.id === id ? { ...bullet, positionX: x, positionY: y } : bullet
@@ -53,7 +53,7 @@ const GameBoard = () => {
     if (x === null && y === null) {
       setEnemyBullets((prev) => prev.filter((bullet) => bullet.id !== id));
     }
-  };
+  }, []);
 
   // Проверка столкновений
   const checkCollisions = useCallback(() => {
@@ -136,7 +136,7 @@ const GameBoard = () => {
         onPositionUpdate={updateEnemyBulletPosition}
       />
     ));
-  }, [enemyBullets]);
+  }, [enemyBullets, updateEnemyBulletPosition]);
 
   // Отображение UI
   return (
